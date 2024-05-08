@@ -1,5 +1,14 @@
 # Docker
 ## Note
+### Bugs
+1. Docker log, do not give all python print: https://www.jianshu.com/p/9f1fa58d4395
+```bash
+# In Dockerfile:
+CMD ["python", "-u", "Api.py"]
+# In .py file:
+print("Hello? Anyone there?", flush=True)
+```
+
 ### Dockerfile
 In Dockerfile:
 ```bash
