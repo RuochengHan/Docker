@@ -25,7 +25,7 @@ Need to use 0.0.0.0:$port for service, not 127.0.0.1:$port
 ```bash
 sudo docker build -t $image . # build image based on ./Dockerfile
 # create container, add -rm can directly delete after running test commands
-sudo docker run -itd -p 40001:40000 --name "$container" $image # 40001 is port outside and 40000 is inside
+sudo docker run -it -p 40001:40000 --name "$container" $image # 40001 is port outside and 40000 is inside
 sudo docker exec -it $container /bin/bash
 ```
 
