@@ -21,6 +21,33 @@ CMD ["bash","-c","..."] # use bash env. to run some command once the container i
 ```
 Need to use 0.0.0.0:$port for service, not 127.0.0.1:$port
 
+For conda environment use:
+```bash
+RUN conda config --set ssl_verify false
+RUN /bin/bash -c "conda env create -f conda_env.yml && \
+    source activate py39 && \ # need to use bash and source activate!!!
+    pip install --no-cache-dir -r pip_requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple"
+
+# Make RUN commands use the new environment:
+SHELL ["conda", "run", "--no-capture-output", "-n", "py39", "/bin/bash", "-c"]
+EXPOSE $port
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "py39", "python", "-u", "service.py"]
+
+# OR
+RUN conda config --set ssl_verify false
+RUN conda create --override-channels --yes --name py39 -c conda-forge python=3.9
+RUN /bin/bash -c "conda activate py39\
+    && conda install --override-channels -c conda-forge --yes --file conda_requirements.txt\
+    && pip install --no-cache-dir -r pip_requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple"
+
+RUN echo "conda activate py39" >> ~/.bashrc
+
+# Make RUN commands use the new environment:
+SHELL ["conda", "run", "--no-capture-output", "-n", "py39", "/bin/bash", "-c"]
+EXPOSE $port
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "py39", "python", "-u", "service.py"]
+```
+
 ### Build image, create container
 ```bash
 sudo docker build -t $image . # build image based on ./Dockerfile
